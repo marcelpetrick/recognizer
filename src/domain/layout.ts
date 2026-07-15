@@ -24,7 +24,7 @@ const layoutSlots = [
 export const layoutLimits = {
   minSize: 16,
   maxSize: 19,
-  maxRotation: 18,
+  maxRotation: 55,
   hitSize: 20,
   safeEdge: 2,
 } as const
