@@ -120,8 +120,7 @@ export function parseGameData(value: unknown): StoredGameData | undefined {
 
   // Every schema version shares this base shape; only `language` (added in
   // v2) needs repairing when it's missing (v1 data) or invalid.
-  const storedLanguage = (data.preferences as Record<string, unknown>)
-    .language
+  const storedLanguage = (data.preferences as Record<string, unknown>).language
   const language = isLanguage(storedLanguage) ? storedLanguage : 'en'
 
   return {

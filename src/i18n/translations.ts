@@ -91,8 +91,7 @@ export const en: Translations = {
   reduceAnimations: 'Reduce animations',
   clearData: 'Clear local game data',
   clearDataConfirm: 'Clear all local rankings and preferences?',
-  leaveGameConfirm:
-    'Leave this challenge? Your current run will not be saved.',
+  leaveGameConfirm: 'Leave this challenge? Your current run will not be saved.',
   leaveGame: 'Leave game',
   gameInstruction: 'Find the symbol that appears on both cards.',
   matchesProgress: (completed, total) => `${completed} of ${total} matches`,
