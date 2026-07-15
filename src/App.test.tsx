@@ -16,6 +16,17 @@ describe('App', () => {
     expect(screen.getByText('0 of 19 matches')).toBeInTheDocument()
   })
 
+  it('updates the document language when the user switches languages', () => {
+    render(<App />)
+    expect(document.documentElement.lang).toBe('en')
+
+    fireEvent.click(screen.getByRole('button', { name: 'HR' }))
+    expect(document.documentElement.lang).toBe('hr')
+
+    fireEvent.click(screen.getByRole('button', { name: 'DE' }))
+    expect(document.documentElement.lang).toBe('de')
+  })
+
   it('opens and closes the concise help screen', () => {
     render(<App />)
     fireEvent.click(screen.getByRole('button', { name: /how to play/i }))
