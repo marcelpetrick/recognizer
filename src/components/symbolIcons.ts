@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
+import type { SymbolName } from '../domain/symbols'
 import {
   Anchor,
   Apple,
@@ -59,7 +60,7 @@ import {
   Zap,
 } from 'lucide-react'
 
-export const symbolIcons: Record<string, LucideIcon> = {
+export const symbolIcons: Record<SymbolName, LucideIcon> = {
   bird: Bird,
   tree: TreePine,
   anchor: Anchor,
