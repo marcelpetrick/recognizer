@@ -27,14 +27,23 @@ import {
 } from './domain/storage'
 import {
   challengeSizes,
+  languages,
   matchingDecisionCount,
+  type Language,
   type SymbolId,
 } from './domain/types'
+import { translations, type Translations } from './i18n'
 
 type View = 'menu' | 'help' | 'game' | 'results' | 'rankings' | 'settings'
 
-function displayName(name: string): string {
-  return name.trim() || 'Player'
+const languageLabels: Record<Language, string> = {
+  en: 'EN',
+  hr: 'HR',
+  de: 'DE',
+}
+
+function displayName(name: string, t: Translations): string {
+  return name.trim() || t.defaultPlayerName
 }
 
 export function App() {
@@ -56,8 +65,9 @@ export function App() {
     retained: boolean
   }>()
 
-  const { playerName, challengeSize, soundEnabled, reducedMotion } =
+  const { playerName, challengeSize, soundEnabled, reducedMotion, language } =
     gameData.preferences
+  const t = translations[language]
 
   const elapsed = timer ? elapsedMilliseconds(timer, now) : 0
   const decisionCount = matchingDecisionCount(challengeSize)
@@ -136,7 +146,7 @@ export function App() {
       if (soundEnabled) {
         playFeedbackTone('incorrect')
       }
-      setWarning('Not the shared symbol — keep looking!')
+      setWarning(t.warningNotShared)
       return
     }
 
@@ -163,7 +173,7 @@ export function App() {
         const finishedTimer = finishTimer(timer, Date.now())
         const result = {
           id: `${finishedTimer.finishedAt ?? Date.now()}-${Math.random()}`,
-          playerName: displayName(playerName),
+          playerName: displayName(playerName, t),
           challengeSize,
           elapsedMs: elapsedMilliseconds(
             finishedTimer,
@@ -199,27 +209,20 @@ export function App() {
     return (
       <main className="app-shell">
         <section className="panel help-panel">
-          <p className="eyebrow">How to play</p>
-          <h1>Find the one match</h1>
+          <p className="eyebrow">{t.howToPlay}</p>
+          <h1>{t.helpTitle}</h1>
           <ol>
-            <li>Two cards appear with eight symbols each.</li>
-            <li>They share exactly one symbol.</li>
-            <li>Click that symbol on either card.</li>
-            <li>
-              The right card becomes your new card and a new card appears.
-            </li>
-            <li>Finish every pair as quickly as you can.</li>
+            {t.helpSteps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
           </ol>
-          <p>
-            The clock runs continuously. Wrong picks only show a small warning,
-            so you can keep trying.
-          </p>
+          <p>{t.helpNote}</p>
           <button
             className="button"
             type="button"
             onClick={() => setView('menu')}
           >
-            Back to menu
+            {t.backToMenu}
           </button>
         </section>
       </main>
@@ -230,43 +233,38 @@ export function App() {
     return (
       <main className="app-shell">
         <section className="panel results-panel">
-          <p className="eyebrow">Challenge complete</p>
-          <h1>Nice work, {displayName(playerName)}!</h1>
-          <p className="result-time" aria-label="Final time">
+          <p className="eyebrow">{t.challengeComplete}</p>
+          <h1>{t.niceWork(displayName(playerName, t))}</h1>
+          <p className="result-time" aria-label={t.finalTime}>
             {formatDuration(
               elapsedMilliseconds(timer, timer.finishedAt ?? now),
               true,
             )}
           </p>
-          <p>
-            {challengeSize} cards · {run.incorrectSelections} wrong pick
-            {run.incorrectSelections === 1 ? '' : 's'}
-          </p>
+          <p>{t.resultSummary(challengeSize, run.incorrectSelections)}</p>
           {resultSummary?.personalBest && (
-            <p className="achievement">New personal best!</p>
+            <p className="achievement">{t.newPersonalBest}</p>
           )}
           {resultSummary?.retained && resultSummary.rank && (
-            <p className="achievement">
-              Rank #{resultSummary.rank} in this tier
-            </p>
+            <p className="achievement">{t.rankInTier(resultSummary.rank)}</p>
           )}
           <div className="button-row">
             <button className="button" type="button" onClick={startGame}>
-              Play again
+              {t.playAgain}
             </button>
             <button
               className="button button-secondary"
               type="button"
               onClick={() => setView('menu')}
             >
-              Main menu
+              {t.mainMenu}
             </button>
             <button
               className="text-button"
               type="button"
               onClick={() => setView('rankings')}
             >
-              View rankings
+              {t.viewRankings}
             </button>
           </div>
         </section>
@@ -279,8 +277,8 @@ export function App() {
     return (
       <main className="app-shell">
         <section className="panel rankings-panel">
-          <p className="eyebrow">Local rankings</p>
-          <h1>{challengeSize}-card best times</h1>
+          <p className="eyebrow">{t.localRankings}</p>
+          <h1>{t.bestTimes(challengeSize)}</h1>
           <ol className="ranking-list">
             {Array.from({ length: 10 }, (_, index) => {
               const entry = entries[index]
@@ -300,7 +298,7 @@ export function App() {
             type="button"
             onClick={() => setView('menu')}
           >
-            Back to menu
+            {t.backToMenu}
           </button>
         </section>
       </main>
@@ -311,8 +309,8 @@ export function App() {
     return (
       <main className="app-shell">
         <section className="panel settings-panel">
-          <p className="eyebrow">Settings</p>
-          <h1>Play your way</h1>
+          <p className="eyebrow">{t.settings}</p>
+          <h1>{t.playYourWay}</h1>
           <label className="setting-toggle">
             <input
               type="checkbox"
@@ -321,7 +319,7 @@ export function App() {
                 updatePreferences({ soundEnabled: event.target.checked })
               }
             />
-            Enable feedback sounds
+            {t.enableSounds}
           </label>
           <label className="setting-toggle">
             <input
@@ -331,27 +329,27 @@ export function App() {
                 updatePreferences({ reducedMotion: event.target.checked })
               }
             />
-            Reduce animations
+            {t.reduceAnimations}
           </label>
           <button
             className="button button-danger"
             type="button"
             onClick={() => {
-              if (window.confirm('Clear all local rankings and preferences?')) {
+              if (window.confirm(t.clearDataConfirm)) {
                 clearGameData(window.localStorage)
                 skipNextSave.current = true
                 setGameData(defaultGameData())
               }
             }}
           >
-            Clear local game data
+            {t.clearData}
           </button>
           <button
             className="text-button menu-help"
             type="button"
             onClick={() => setView('menu')}
           >
-            Back to menu
+            {t.backToMenu}
           </button>
         </section>
       </main>
@@ -364,23 +362,19 @@ export function App() {
       <main className="game-shell">
         <header className="game-header">
           <div>
-            <p className="eyebrow">Recognizer</p>
+            <p className="eyebrow">{t.appTitle}</p>
             <p className="progress-text">
-              {completed} of {decisionCount} matches
+              {t.matchesProgress(completed, decisionCount)}
             </p>
           </div>
-          <div className="timer" aria-label="Elapsed time">
+          <div className="timer" aria-label={t.elapsedTime}>
             {formatDuration(elapsed)}
           </div>
           <button
             className="text-button"
             type="button"
             onClick={() => {
-              if (
-                window.confirm(
-                  'Leave this challenge? Your current run will not be saved.',
-                )
-              ) {
+              if (window.confirm(t.leaveGameConfirm)) {
                 sessionId.current += 1
                 if (transitionTimeoutId.current !== null) {
                   window.clearTimeout(transitionTimeoutId.current)
@@ -392,19 +386,17 @@ export function App() {
               }
             }}
           >
-            Leave game
+            {t.leaveGame}
           </button>
         </header>
-        <p className="game-instruction">
-          Find the symbol that appears on both cards.
-        </p>
+        <p className="game-instruction">{t.gameInstruction}</p>
         <p className="warning" role="status" aria-live="polite">
           {warning}
         </p>
-        <section className="cards-grid" aria-label="Matching cards">
+        <section className="cards-grid" aria-label={t.matchingCards}>
           <SymbolCard
             card={run.cards[run.currentIndex]}
-            label="Your current card"
+            label={t.currentCard}
             seed={run.layoutSeeds[run.cards[run.currentIndex].id]}
             selectedSymbolId={selectedSymbolId}
             disabled={run.phase !== 'active'}
@@ -412,7 +404,7 @@ export function App() {
           />
           <SymbolCard
             card={run.cards[run.currentIndex + 1]}
-            label="Next card"
+            label={t.nextCard}
             seed={run.layoutSeeds[run.cards[run.currentIndex + 1].id]}
             selectedSymbolId={selectedSymbolId}
             disabled={run.phase !== 'active'}
@@ -426,13 +418,24 @@ export function App() {
   return (
     <main className="app-shell">
       <section className="panel menu-panel">
-        <p className="eyebrow">Visual concentration</p>
-        <h1>Recognizer</h1>
-        <p className="intro">
-          Find the one symbol shared by both cards — fast.
-        </p>
+        <div className="language-picker" role="group" aria-label="Language">
+          {languages.map((code) => (
+            <button
+              key={code}
+              className={`language-button${language === code ? ' is-active' : ''}`}
+              type="button"
+              aria-pressed={language === code}
+              onClick={() => updatePreferences({ language: code })}
+            >
+              {languageLabels[code]}
+            </button>
+          ))}
+        </div>
+        <p className="eyebrow">{t.visualConcentrationEyebrow}</p>
+        <h1>{t.appTitle}</h1>
+        <p className="intro">{t.tagline}</p>
         <label className="field-label" htmlFor="player-name">
-          Your name <span>(optional)</span>
+          {t.yourNameLabel} <span>{t.optionalLabel}</span>
         </label>
         <input
           id="player-name"
@@ -440,25 +443,25 @@ export function App() {
           value={playerName}
           maxLength={24}
           autoComplete="nickname"
-          placeholder="Player"
+          placeholder={t.namePlaceholder}
           onChange={(event) =>
             updatePreferences({ playerName: event.target.value })
           }
         />
         <fieldset className="challenge-picker">
-          <legend>Choose your challenge</legend>
+          <legend>{t.chooseChallenge}</legend>
           <div className="tier-buttons">
             {challengeSizes.map((size) => (
               <button
                 key={size}
                 className={`tier-button${challengeSize === size ? ' is-active' : ''}`}
                 type="button"
-                aria-label={`${size} cards`}
+                aria-label={t.challengeSizeLabel(size)}
                 aria-pressed={challengeSize === size}
                 onClick={() => updatePreferences({ challengeSize: size })}
               >
                 <strong>{size}</strong>
-                <span>cards</span>
+                <span>{t.cardsUnit}</span>
               </button>
             ))}
           </div>
@@ -468,14 +471,14 @@ export function App() {
           type="button"
           onClick={startGame}
         >
-          Start timed challenge
+          {t.startChallenge}
         </button>
         <button
           className="text-button menu-help"
           type="button"
           onClick={() => setView('help')}
         >
-          How to play
+          {t.howToPlay}
         </button>
         <div className="menu-links">
           <button
@@ -483,14 +486,14 @@ export function App() {
             type="button"
             onClick={() => setView('rankings')}
           >
-            Rankings
+            {t.rankings}
           </button>
           <button
             className="text-button"
             type="button"
             onClick={() => setView('settings')}
           >
-            Settings
+            {t.settings}
           </button>
         </div>
       </section>

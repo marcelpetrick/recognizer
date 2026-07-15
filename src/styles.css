@@ -45,6 +45,24 @@ input:focus-visible {
   box-shadow: 10px 10px 0 #f6c64f;
   padding: clamp(1.75rem, 6vw, 3.5rem);
 }
+.language-picker {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.language-button {
+  border: 2px solid #172033;
+  border-radius: 0.6rem;
+  background: #fff;
+  padding: 0.3rem 0.6rem;
+  color: #172033;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+.language-button.is-active {
+  background: #f6c64f;
+}
 .eyebrow {
   margin: 0;
   color: #a43a2c;
