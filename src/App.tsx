@@ -496,6 +496,7 @@ export function App() {
             {t.settings}
           </button>
         </div>
+        <p className="version-tag">v{__APP_VERSION__}</p>
       </section>
     </main>
   )
