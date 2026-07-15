@@ -1,13 +1,5 @@
 import type { SymbolId } from './types'
 
-export interface SymbolMetadata {
-  readonly id: SymbolId
-  readonly name: string
-  readonly label: string
-  readonly color: string
-  readonly glyph: string
-}
-
 const symbolDefinitions = [
   ['bird', 'Bird', '#3989db', '🐦'],
   ['tree', 'Tree', '#3f9a50', '🌳'],
@@ -67,6 +59,19 @@ const symbolDefinitions = [
   ['ladybird', 'Ladybird', '#d84b4a', '🐞'],
   ['compass', 'Compass', '#c86b50', '🧭'],
 ] as const
+
+// A literal union of every symbol name, so lookups keyed by symbol name
+// (e.g. the icon map in symbolIcons.ts) get a compile-time guarantee of
+// exactly one entry per symbol -- no missing, no misspelled, no orphaned keys.
+export type SymbolName = (typeof symbolDefinitions)[number][0]
+
+export interface SymbolMetadata {
+  readonly id: SymbolId
+  readonly name: SymbolName
+  readonly label: string
+  readonly color: string
+  readonly glyph: string
+}
 
 export const symbolCatalog: readonly SymbolMetadata[] = symbolDefinitions.map(
   ([name, label, color, glyph], id) => ({

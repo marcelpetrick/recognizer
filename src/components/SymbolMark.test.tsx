@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react'
+import type { LucideIcon } from 'lucide-react'
 import { symbolCatalog } from '../domain/symbols'
 import { SymbolMark } from './SymbolMark'
 import { symbolIcons } from './symbolIcons'
@@ -18,7 +19,7 @@ describe('SymbolMark', () => {
   })
 
   it('never maps two different symbols to the same icon', () => {
-    const iconNamesBySymbol = new Map<(typeof symbolIcons)[string], string[]>()
+    const iconNamesBySymbol = new Map<LucideIcon, string[]>()
     for (const [name, icon] of Object.entries(symbolIcons)) {
       const names = iconNamesBySymbol.get(icon) ?? []
       names.push(name)

@@ -7,9 +7,6 @@ interface SymbolMarkProps {
 
 export function SymbolMark({ symbol }: SymbolMarkProps) {
   const Icon = symbolIcons[symbol.name]
-  if (!Icon) {
-    throw new Error(`No icon is mapped for ${symbol.name}`)
-  }
 
   return (
     <Icon
