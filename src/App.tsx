@@ -29,21 +29,14 @@ import {
   challengeSizes,
   languages,
   matchingDecisionCount,
-  type Language,
   type SymbolId,
 } from './domain/types'
-import { translations, type Translations } from './i18n'
+import { translations } from './i18n'
 
 type View = 'menu' | 'help' | 'game' | 'results' | 'rankings' | 'settings'
 
-const languageLabels: Record<Language, string> = {
-  en: 'EN',
-  hr: 'HR',
-  de: 'DE',
-}
-
-function displayName(name: string, t: Translations): string {
-  return name.trim() || t.defaultPlayerName
+function displayName(name: string, defaultName: string): string {
+  return name.trim() || defaultName
 }
 
 export function App() {
@@ -173,7 +166,10 @@ export function App() {
         const finishedTimer = finishTimer(timer, Date.now())
         const result = {
           id: `${finishedTimer.finishedAt ?? Date.now()}-${Math.random()}`,
-          playerName: displayName(playerName, t),
+          // Store the raw name, not a localized placeholder: this is
+          // persisted and rendered later, potentially under a different
+          // language than the one active when the run finished.
+          playerName: playerName.trim(),
           challengeSize,
           elapsedMs: elapsedMilliseconds(
             finishedTimer,
@@ -234,7 +230,7 @@ export function App() {
       <main className="app-shell">
         <section className="panel results-panel">
           <p className="eyebrow">{t.challengeComplete}</p>
-          <h1>{t.niceWork(displayName(playerName, t))}</h1>
+          <h1>{t.niceWork(displayName(playerName, t.defaultPlayerName))}</h1>
           <p className="result-time" aria-label={t.finalTime}>
             {formatDuration(
               elapsedMilliseconds(timer, timer.finishedAt ?? now),
@@ -285,7 +281,9 @@ export function App() {
               return (
                 <li key={entry?.id ?? `empty-${index}`}>
                   <span>{index + 1}</span>
-                  <strong>{entry?.playerName ?? '—'}</strong>
+                  <strong>
+                    {entry ? entry.playerName || t.defaultPlayerName : '—'}
+                  </strong>
                   <time>
                     {entry ? formatDuration(entry.elapsedMs, true) : '—'}
                   </time>
@@ -418,7 +416,11 @@ export function App() {
   return (
     <main className="app-shell">
       <section className="panel menu-panel">
-        <div className="language-picker" role="group" aria-label="Language">
+        <div
+          className="language-picker"
+          role="group"
+          aria-label={t.languagePickerLabel}
+        >
           {languages.map((code) => (
             <button
               key={code}
@@ -427,7 +429,7 @@ export function App() {
               aria-pressed={language === code}
               onClick={() => updatePreferences({ language: code })}
             >
-              {languageLabels[code]}
+              {translations[code].languageCode}
             </button>
           ))}
         </div>
