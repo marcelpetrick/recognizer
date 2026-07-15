@@ -100,4 +100,38 @@ describe('local game storage', () => {
     expect(loaded.rankings).toEqual(rankings)
     expect(loaded.nextInsertionOrder).toBe(1)
   })
+
+  it('repairs a current-version payload with a missing or invalid language instead of discarding it', () => {
+    const storage = createMemoryStorage()
+    const rankings = emptyRankings()
+    rankings[20] = [
+      {
+        id: 'b',
+        playerName: 'Theo',
+        challengeSize: 20,
+        elapsedMs: 9000,
+        completedAt: 2000,
+        insertionOrder: 0,
+      },
+    ]
+    const corruptedData = {
+      version: 2,
+      preferences: {
+        playerName: 'Theo',
+        challengeSize: 20,
+        soundEnabled: false,
+        reducedMotion: true,
+        language: 'not-a-real-language',
+      },
+      rankings,
+      nextInsertionOrder: 1,
+    }
+    storage.setItem(storageKey, JSON.stringify(corruptedData))
+
+    const loaded = loadGameData(storage)
+    expect(loaded.preferences.language).toBe('en')
+    expect(loaded.preferences.playerName).toBe('Theo')
+    expect(loaded.rankings).toEqual(rankings)
+    expect(loaded.nextInsertionOrder).toBe(1)
+  })
 })
