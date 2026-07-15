@@ -23,13 +23,6 @@ export interface StoredGameData {
   readonly nextInsertionOrder: number
 }
 
-interface StoredGameDataV1 {
-  readonly version: 1
-  readonly preferences: Omit<Preferences, 'language'>
-  readonly rankings: TieredRankings
-  readonly nextInsertionOrder: number
-}
-
 export const defaultPreferences: Preferences = {
   playerName: '',
   challengeSize: 10,
@@ -44,15 +37,6 @@ export function defaultGameData(): StoredGameData {
     preferences: defaultPreferences,
     rankings: emptyRankings(),
     nextInsertionOrder: 0,
-  }
-}
-
-function migrateFromV1(data: StoredGameDataV1): StoredGameData {
-  return {
-    version: currentVersion,
-    preferences: { ...data.preferences, language: 'en' },
-    rankings: data.rankings,
-    nextInsertionOrder: data.nextInsertionOrder,
   }
 }
 
@@ -75,7 +59,7 @@ function isRankingEntry(value: unknown): value is RankingEntry {
   )
 }
 
-function isPreferencesV1(
+function isPreferencesBase(
   value: unknown,
 ): value is Omit<Preferences, 'language'> {
   if (!value || typeof value !== 'object') {
@@ -88,13 +72,6 @@ function isPreferencesV1(
     isChallengeSize(preferences.challengeSize) &&
     typeof preferences.soundEnabled === 'boolean' &&
     typeof preferences.reducedMotion === 'boolean'
-  )
-}
-
-function isPreferences(value: unknown): value is Preferences {
-  return (
-    isPreferencesV1(value) &&
-    isLanguage((value as Record<string, unknown>).language)
   )
 }
 
@@ -122,6 +99,8 @@ function parseRankings(value: unknown): TieredRankings | undefined {
   return rankings
 }
 
+const supportedVersions = [1, currentVersion] as const
+
 export function parseGameData(value: unknown): StoredGameData | undefined {
   if (!value || typeof value !== 'object') {
     return undefined
@@ -132,30 +111,25 @@ export function parseGameData(value: unknown): StoredGameData | undefined {
     !rankings ||
     typeof data.nextInsertionOrder !== 'number' ||
     !Number.isSafeInteger(data.nextInsertionOrder) ||
-    data.nextInsertionOrder < 0
+    data.nextInsertionOrder < 0 ||
+    !supportedVersions.includes(data.version as 1 | typeof currentVersion) ||
+    !isPreferencesBase(data.preferences)
   ) {
     return undefined
   }
 
-  if (data.version === 1 && isPreferencesV1(data.preferences)) {
-    return migrateFromV1({
-      version: 1,
-      preferences: data.preferences,
-      rankings,
-      nextInsertionOrder: data.nextInsertionOrder,
-    })
-  }
+  // Every schema version shares this base shape; only `language` (added in
+  // v2) needs repairing when it's missing (v1 data) or invalid.
+  const storedLanguage = (data.preferences as Record<string, unknown>)
+    .language
+  const language = isLanguage(storedLanguage) ? storedLanguage : 'en'
 
-  if (data.version === currentVersion && isPreferences(data.preferences)) {
-    return {
-      version: currentVersion,
-      preferences: data.preferences,
-      rankings,
-      nextInsertionOrder: data.nextInsertionOrder,
-    }
+  return {
+    version: currentVersion,
+    preferences: { ...data.preferences, language },
+    rankings,
+    nextInsertionOrder: data.nextInsertionOrder,
   }
-
-  return undefined
 }
 
 export function loadGameData(storage?: StorageLike): StoredGameData {
