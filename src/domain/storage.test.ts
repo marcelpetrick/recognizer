@@ -5,6 +5,7 @@ import {
   saveGameData,
   storageKey,
 } from './storage'
+import { emptyRankings } from './rankings'
 
 function createMemoryStorage(): Storage {
   const data = new Map<string, string>()
@@ -59,5 +60,44 @@ describe('local game storage', () => {
     saveGameData(storage, defaultGameData())
     expect(clearGameData(storage)).toBe(true)
     expect(storage.getItem(storageKey)).toBeNull()
+  })
+
+  it('migrates legacy v1 data to the current version, defaulting language to English', () => {
+    const storage = createMemoryStorage()
+    const rankings = emptyRankings()
+    rankings[10] = [
+      {
+        id: 'a',
+        playerName: 'Mia',
+        challengeSize: 10,
+        elapsedMs: 4200,
+        completedAt: 1000,
+        insertionOrder: 0,
+      },
+    ]
+    const legacyData = {
+      version: 1,
+      preferences: {
+        playerName: 'Mia',
+        challengeSize: 10,
+        soundEnabled: true,
+        reducedMotion: false,
+      },
+      rankings,
+      nextInsertionOrder: 1,
+    }
+    storage.setItem(storageKey, JSON.stringify(legacyData))
+
+    const loaded = loadGameData(storage)
+    expect(loaded.version).toBe(2)
+    expect(loaded.preferences).toEqual({
+      playerName: 'Mia',
+      challengeSize: 10,
+      soundEnabled: true,
+      reducedMotion: false,
+      language: 'en',
+    })
+    expect(loaded.rankings).toEqual(rankings)
+    expect(loaded.nextInsertionOrder).toBe(1)
   })
 })
