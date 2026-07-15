@@ -2,8 +2,8 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
-  base: '/recognizer/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/recognizer/' : '/',
   plugins: [
     react(),
     VitePWA({
@@ -33,4 +33,4 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
   },
-})
+}))
