@@ -143,12 +143,18 @@ h1 {
 .menu-help {
   display: block;
   margin: 1.4rem auto 0;
+  padding: 0.5rem 0.9rem;
+  font-size: 1.2rem;
 }
 .menu-links {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.4rem;
   margin-top: 1.1rem;
+}
+.menu-links .text-button {
+  padding: 0.5rem 0.9rem;
+  font-size: 1.2rem;
 }
 .help-panel {
   font-size: 1.1rem;
