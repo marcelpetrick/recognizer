@@ -2,6 +2,8 @@
 
 Recognizer Game is a browser-based, single-player concentration game. Two cards are shown at a time, and every pair of cards has exactly one symbol in common. The player finds that symbol as quickly as possible while a wall-clock timer runs.
 
+**Play it live: [https://marcelpetrick.github.io/recognizer/](https://marcelpetrick.github.io/recognizer/)** (deployed via [GitHub Pages](https://github.com/marcelpetrick/recognizer/deployments/github-pages))
+
 This document is the product specification for the MVP. It consolidates the original game discussion, the written requirements, and the stakeholder clarifications. Where earlier notes conflict with the decisions below, this document is authoritative.
 
 **Author: Marcel Petrick <mail@marcelpetrick.it>**
