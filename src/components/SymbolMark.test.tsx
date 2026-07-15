@@ -16,4 +16,18 @@ describe('SymbolMark', () => {
       unmount()
     })
   })
+
+  it('never maps two different symbols to the same icon', () => {
+    const iconNamesBySymbol = new Map<(typeof symbolIcons)[string], string[]>()
+    for (const [name, icon] of Object.entries(symbolIcons)) {
+      const names = iconNamesBySymbol.get(icon) ?? []
+      names.push(name)
+      iconNamesBySymbol.set(icon, names)
+    }
+
+    const collisions = [...iconNamesBySymbol.values()].filter(
+      (names) => names.length > 1,
+    )
+    expect(collisions).toEqual([])
+  })
 })
