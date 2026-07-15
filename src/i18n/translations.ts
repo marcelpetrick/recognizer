@@ -1,4 +1,6 @@
 export interface Translations {
+  readonly languageCode: string
+  readonly languagePickerLabel: string
   readonly appTitle: string
   readonly visualConcentrationEyebrow: string
   readonly tagline: string
@@ -45,6 +47,8 @@ export interface Translations {
 }
 
 export const en: Translations = {
+  languageCode: 'EN',
+  languagePickerLabel: 'Language',
   appTitle: 'Recognizer',
   visualConcentrationEyebrow: 'Visual concentration',
   tagline: 'Find the one symbol shared by both cards — fast.',
@@ -100,6 +104,8 @@ export const en: Translations = {
 }
 
 export const de: Translations = {
+  languageCode: 'DE',
+  languagePickerLabel: 'Sprache',
   appTitle: 'Recognizer',
   visualConcentrationEyebrow: 'Visuelles Konzentrationsspiel',
   tagline: 'Finde das eine Symbol, das beide Karten teilen — schnell.',
@@ -171,6 +177,8 @@ function croatianWrongPicksPhrase(count: number): string {
 }
 
 export const hr: Translations = {
+  languageCode: 'HR',
+  languagePickerLabel: 'Jezik',
   appTitle: 'Recognizer',
   visualConcentrationEyebrow: 'Vizualna igra koncentracije',
   tagline: 'Pronađi jedan simbol koji dijele obje karte — brzo.',
