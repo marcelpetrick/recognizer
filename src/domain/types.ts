@@ -2,6 +2,10 @@ export const challengeSizes = [10, 20, 50] as const
 
 export type ChallengeSize = (typeof challengeSizes)[number]
 
+export const languages = ['en', 'hr', 'de'] as const
+
+export type Language = (typeof languages)[number]
+
 export type SymbolId = number
 
 export interface Card {
@@ -35,10 +39,15 @@ export interface Preferences {
   readonly challengeSize: ChallengeSize
   readonly soundEnabled: boolean
   readonly reducedMotion: boolean
+  readonly language: Language
 }
 
 export function isChallengeSize(value: number): value is ChallengeSize {
   return challengeSizes.includes(value as ChallengeSize)
+}
+
+export function isLanguage(value: unknown): value is Language {
+  return typeof value === 'string' && languages.includes(value as Language)
 }
 
 export function matchingDecisionCount(challengeSize: ChallengeSize): number {
