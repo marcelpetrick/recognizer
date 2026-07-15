@@ -78,6 +78,10 @@ export function App() {
   }, [reducedMotion])
 
   useEffect(() => {
+    document.documentElement.lang = language
+  }, [language])
+
+  useEffect(() => {
     if (view !== 'game' || !timer || run?.phase === 'completed') {
       return undefined
     }
