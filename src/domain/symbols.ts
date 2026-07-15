@@ -11,7 +11,7 @@ export interface SymbolMetadata {
 const symbolDefinitions = [
   ['bird', 'Bird', '#3989db', '🐦'],
   ['tree', 'Tree', '#3f9a50', '🌳'],
-  ['anchor', 'Anchor', '#8a6048', '⚓'],
+  ['anchor', 'Anchor', '#5b6b78', '⚓'],
   ['target', 'Target', '#d64740', '🎯'],
   ['cheese', 'Cheese', '#f5c94d', '🧀'],
   ['stone', 'Stone', '#78808a', '🪨'],
