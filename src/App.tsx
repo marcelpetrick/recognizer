@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { SymbolCard } from './components/SymbolCard'
 import { playFeedbackTone } from './feedback'
 import { createChallenge } from './domain/challenge'
 import {
@@ -13,7 +12,6 @@ import {
 import {
   elapsedMilliseconds,
   finishTimer,
-  formatDuration,
   startTimer,
   type RunTimer,
 } from './domain/timer'
@@ -25,19 +23,16 @@ import {
   saveGameData,
   type StoredGameData,
 } from './domain/storage'
-import {
-  challengeSizes,
-  languages,
-  matchingDecisionCount,
-  type SymbolId,
-} from './domain/types'
+import { matchingDecisionCount, type SymbolId } from './domain/types'
 import { translations } from './i18n'
+import { GameView } from './views/GameView'
+import { HelpView } from './views/HelpView'
+import { MenuView } from './views/MenuView'
+import { RankingsView } from './views/RankingsView'
+import { ResultsView } from './views/ResultsView'
+import { SettingsView } from './views/SettingsView'
 
 type View = 'menu' | 'help' | 'game' | 'results' | 'rankings' | 'settings'
-
-function displayName(name: string, defaultName: string): string {
-  return name.trim() || defaultName
-}
 
 export function App() {
   const [view, setView] = useState<View>('menu')
@@ -131,6 +126,23 @@ export function App() {
     }))
   }
 
+  function leaveGame() {
+    sessionId.current += 1
+    if (transitionTimeoutId.current !== null) {
+      window.clearTimeout(transitionTimeoutId.current)
+      transitionTimeoutId.current = null
+    }
+    setView('menu')
+    setRun(null)
+    setTimer(null)
+  }
+
+  function clearData() {
+    clearGameData(window.localStorage)
+    skipNextSave.current = true
+    setGameData(defaultGameData())
+  }
+
   function handleSelection(symbolId: SymbolId) {
     if (!run || !timer) {
       return
@@ -206,304 +218,78 @@ export function App() {
   }
 
   if (view === 'help') {
-    return (
-      <main className="app-shell">
-        <section className="panel help-panel">
-          <p className="eyebrow">{t.howToPlay}</p>
-          <h1>{t.helpTitle}</h1>
-          <ol>
-            {t.helpSteps.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
-          <p>{t.helpNote}</p>
-          <button
-            className="button"
-            type="button"
-            onClick={() => setView('menu')}
-          >
-            {t.backToMenu}
-          </button>
-        </section>
-      </main>
-    )
+    return <HelpView t={t} onBack={() => setView('menu')} />
   }
 
   if (view === 'results' && run && timer) {
     return (
-      <main className="app-shell">
-        <section className="panel results-panel">
-          <p className="eyebrow">{t.challengeComplete}</p>
-          <h1>{t.niceWork(displayName(playerName, t.defaultPlayerName))}</h1>
-          <p className="result-time" aria-label={t.finalTime}>
-            {formatDuration(
-              elapsedMilliseconds(timer, timer.finishedAt ?? now),
-              true,
-            )}
-          </p>
-          <p>{t.resultSummary(challengeSize, run.incorrectSelections)}</p>
-          {resultSummary?.personalBest && (
-            <p className="achievement">{t.newPersonalBest}</p>
-          )}
-          {resultSummary?.retained && resultSummary.rank && (
-            <p className="achievement">{t.rankInTier(resultSummary.rank)}</p>
-          )}
-          <div className="button-row">
-            <button className="button" type="button" onClick={startGame}>
-              {t.playAgain}
-            </button>
-            <button
-              className="button button-secondary"
-              type="button"
-              onClick={() => setView('menu')}
-            >
-              {t.mainMenu}
-            </button>
-            <button
-              className="text-button"
-              type="button"
-              onClick={() => setView('rankings')}
-            >
-              {t.viewRankings}
-            </button>
-          </div>
-        </section>
-      </main>
+      <ResultsView
+        t={t}
+        playerName={playerName}
+        challengeSize={challengeSize}
+        elapsedMs={elapsedMilliseconds(timer, timer.finishedAt ?? now)}
+        incorrectSelections={run.incorrectSelections}
+        personalBest={resultSummary?.personalBest ?? false}
+        retained={resultSummary?.retained ?? false}
+        rank={resultSummary?.rank}
+        onPlayAgain={startGame}
+        onMainMenu={() => setView('menu')}
+        onViewRankings={() => setView('rankings')}
+      />
     )
   }
 
   if (view === 'rankings') {
-    const entries = gameData.rankings[challengeSize]
     return (
-      <main className="app-shell">
-        <section className="panel rankings-panel">
-          <p className="eyebrow">{t.localRankings}</p>
-          <h1>{t.bestTimes(challengeSize)}</h1>
-          <ol className="ranking-list">
-            {Array.from({ length: 10 }, (_, index) => {
-              const entry = entries[index]
-              return (
-                <li key={entry?.id ?? `empty-${index}`}>
-                  <span>{index + 1}</span>
-                  <strong>
-                    {entry ? entry.playerName || t.defaultPlayerName : '—'}
-                  </strong>
-                  <time>
-                    {entry ? formatDuration(entry.elapsedMs, true) : '—'}
-                  </time>
-                </li>
-              )
-            })}
-          </ol>
-          <button
-            className="button"
-            type="button"
-            onClick={() => setView('menu')}
-          >
-            {t.backToMenu}
-          </button>
-        </section>
-      </main>
+      <RankingsView
+        t={t}
+        challengeSize={challengeSize}
+        entries={gameData.rankings[challengeSize]}
+        onBack={() => setView('menu')}
+      />
     )
   }
 
   if (view === 'settings') {
     return (
-      <main className="app-shell">
-        <section className="panel settings-panel">
-          <p className="eyebrow">{t.settings}</p>
-          <h1>{t.playYourWay}</h1>
-          <label className="setting-toggle">
-            <input
-              type="checkbox"
-              checked={soundEnabled}
-              onChange={(event) =>
-                updatePreferences({ soundEnabled: event.target.checked })
-              }
-            />
-            {t.enableSounds}
-          </label>
-          <label className="setting-toggle">
-            <input
-              type="checkbox"
-              checked={reducedMotion}
-              onChange={(event) =>
-                updatePreferences({ reducedMotion: event.target.checked })
-              }
-            />
-            {t.reduceAnimations}
-          </label>
-          <button
-            className="button button-danger"
-            type="button"
-            onClick={() => {
-              if (window.confirm(t.clearDataConfirm)) {
-                clearGameData(window.localStorage)
-                skipNextSave.current = true
-                setGameData(defaultGameData())
-              }
-            }}
-          >
-            {t.clearData}
-          </button>
-          <button
-            className="text-button menu-help"
-            type="button"
-            onClick={() => setView('menu')}
-          >
-            {t.backToMenu}
-          </button>
-        </section>
-      </main>
+      <SettingsView
+        t={t}
+        soundEnabled={soundEnabled}
+        reducedMotion={reducedMotion}
+        onUpdatePreferences={updatePreferences}
+        onClearData={clearData}
+        onBack={() => setView('menu')}
+      />
     )
   }
 
   if (view === 'game' && run && timer && sharedSymbol !== undefined) {
-    const completed = completedDecisionCount(run)
     return (
-      <main className="game-shell">
-        <header className="game-header">
-          <div>
-            <p className="eyebrow">{t.appTitle}</p>
-            <p className="progress-text">
-              {t.matchesProgress(completed, decisionCount)}
-            </p>
-          </div>
-          <div className="timer" aria-label={t.elapsedTime}>
-            {formatDuration(elapsed)}
-          </div>
-          <button
-            className="text-button"
-            type="button"
-            onClick={() => {
-              if (window.confirm(t.leaveGameConfirm)) {
-                sessionId.current += 1
-                if (transitionTimeoutId.current !== null) {
-                  window.clearTimeout(transitionTimeoutId.current)
-                  transitionTimeoutId.current = null
-                }
-                setView('menu')
-                setRun(null)
-                setTimer(null)
-              }
-            }}
-          >
-            {t.leaveGame}
-          </button>
-        </header>
-        <p className="game-instruction">{t.gameInstruction}</p>
-        <p className="warning" role="status" aria-live="polite">
-          {warning}
-        </p>
-        <section className="cards-grid" aria-label={t.matchingCards}>
-          <SymbolCard
-            card={run.cards[run.currentIndex]}
-            label={t.currentCard}
-            seed={run.layoutSeeds[run.cards[run.currentIndex].id]}
-            selectedSymbolId={selectedSymbolId}
-            disabled={run.phase !== 'active'}
-            onSelect={handleSelection}
-          />
-          <SymbolCard
-            card={run.cards[run.currentIndex + 1]}
-            label={t.nextCard}
-            seed={run.layoutSeeds[run.cards[run.currentIndex + 1].id]}
-            selectedSymbolId={selectedSymbolId}
-            disabled={run.phase !== 'active'}
-            onSelect={handleSelection}
-          />
-        </section>
-      </main>
+      <GameView
+        t={t}
+        run={run}
+        completed={completedDecisionCount(run)}
+        decisionCount={decisionCount}
+        elapsedMs={elapsed}
+        warning={warning}
+        selectedSymbolId={selectedSymbolId}
+        onSelect={handleSelection}
+        onLeaveGame={leaveGame}
+      />
     )
   }
 
   return (
-    <main className="app-shell">
-      <section className="panel menu-panel">
-        <div
-          className="language-picker"
-          role="group"
-          aria-label={t.languagePickerLabel}
-        >
-          {languages.map((code) => (
-            <button
-              key={code}
-              className={`language-button${language === code ? ' is-active' : ''}`}
-              type="button"
-              aria-pressed={language === code}
-              onClick={() => updatePreferences({ language: code })}
-            >
-              {translations[code].languageCode}
-            </button>
-          ))}
-        </div>
-        <p className="eyebrow">{t.visualConcentrationEyebrow}</p>
-        <h1>{t.appTitle}</h1>
-        <p className="intro">{t.tagline}</p>
-        <label className="field-label" htmlFor="player-name">
-          {t.yourNameLabel} <span>{t.optionalLabel}</span>
-        </label>
-        <input
-          id="player-name"
-          className="name-input"
-          value={playerName}
-          maxLength={24}
-          autoComplete="nickname"
-          placeholder={t.namePlaceholder}
-          onChange={(event) =>
-            updatePreferences({ playerName: event.target.value })
-          }
-        />
-        <fieldset className="challenge-picker">
-          <legend>{t.chooseChallenge}</legend>
-          <div className="tier-buttons">
-            {challengeSizes.map((size) => (
-              <button
-                key={size}
-                className={`tier-button${challengeSize === size ? ' is-active' : ''}`}
-                type="button"
-                aria-label={t.challengeSizeLabel(size)}
-                aria-pressed={challengeSize === size}
-                onClick={() => updatePreferences({ challengeSize: size })}
-              >
-                <strong>{size}</strong>
-                <span>{t.cardsUnit}</span>
-              </button>
-            ))}
-          </div>
-        </fieldset>
-        <button
-          className="button start-button"
-          type="button"
-          onClick={startGame}
-        >
-          {t.startChallenge}
-        </button>
-        <button
-          className="text-button menu-help"
-          type="button"
-          onClick={() => setView('help')}
-        >
-          {t.howToPlay}
-        </button>
-        <div className="menu-links">
-          <button
-            className="text-button"
-            type="button"
-            onClick={() => setView('rankings')}
-          >
-            {t.rankings}
-          </button>
-          <button
-            className="text-button"
-            type="button"
-            onClick={() => setView('settings')}
-          >
-            {t.settings}
-          </button>
-        </div>
-        <p className="version-tag">v{__APP_VERSION__}</p>
-      </section>
-    </main>
+    <MenuView
+      t={t}
+      language={language}
+      playerName={playerName}
+      challengeSize={challengeSize}
+      onUpdatePreferences={updatePreferences}
+      onStartGame={startGame}
+      onShowHelp={() => setView('help')}
+      onShowRankings={() => setView('rankings')}
+      onShowSettings={() => setView('settings')}
+    />
   )
 }
