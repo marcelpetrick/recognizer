@@ -156,6 +156,20 @@ export const de: Translations = {
   nextCard: 'Nächste Karte',
 }
 
+// Croatian numeral agreement for "pokušaj" (attempt) depends on the last
+// one or two digits, not just whether the count equals 1.
+function croatianWrongPicksPhrase(count: number): string {
+  const lastTwo = count % 100
+  const last = count % 10
+  if (last === 1 && lastTwo !== 11) {
+    return 'pogrešan pokušaj'
+  }
+  if (last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14)) {
+    return 'pogrešna pokušaja'
+  }
+  return 'pogrešnih pokušaja'
+}
+
 export const hr: Translations = {
   appTitle: 'Recognizer',
   visualConcentrationEyebrow: 'Vizualna igra koncentracije',
@@ -186,7 +200,7 @@ export const hr: Translations = {
   niceWork: (name) => `Bravo, ${name}!`,
   finalTime: 'Konačno vrijeme',
   resultSummary: (cardCount, wrongCount) =>
-    `${cardCount} karata · ${wrongCount} pogrešn${wrongCount === 1 ? 'i pokušaj' : 'a pokušaja'}`,
+    `${cardCount} karata · ${wrongCount} ${croatianWrongPicksPhrase(wrongCount)}`,
   newPersonalBest: 'Novi osobni rekord!',
   rankInTier: (rank) => `Rang #${rank} u ovoj kategoriji`,
   playAgain: 'Igraj ponovno',
