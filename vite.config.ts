@@ -5,8 +5,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 const { version } = JSON.parse(readFileSync('./package.json', 'utf-8'))
 
-export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/recognizer/' : '/',
+// Deployment targets that serve from a subpath (e.g. GitHub Pages) set
+// PUBLIC_BASE_PATH at build time; local dev, preview, and e2e use the root.
+export default defineConfig({
+  base: process.env.PUBLIC_BASE_PATH ?? '/',
   define: {
     __APP_VERSION__: JSON.stringify(version),
   },
@@ -39,4 +41,4 @@ export default defineConfig(({ command }) => ({
     setupFiles: ['./src/test/setup.ts'],
     exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
   },
-}))
+})
