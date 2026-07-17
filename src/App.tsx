@@ -81,7 +81,7 @@ export function App() {
       return undefined
     }
 
-    const intervalId = window.setInterval(() => setNow(Date.now()), 100)
+    const intervalId = window.setInterval(() => setNow(performance.now()), 100)
     return () => window.clearInterval(intervalId)
   }, [run?.phase, timer, view])
 
@@ -109,7 +109,9 @@ export function App() {
       createChallenge(challengeSize),
       Math.floor(Math.random() * 2_147_483_647),
     )
-    const startedAt = Date.now()
+    // performance.now() is monotonic: a wall-clock adjustment (NTP sync,
+    // manual change) mid-run cannot corrupt or rewind the elapsed time.
+    const startedAt = performance.now()
     setRun(newRun)
     setTimer(startTimer(startedAt))
     setNow(startedAt)
@@ -179,19 +181,19 @@ export function App() {
       setSelectedSymbolId(undefined)
 
       if (nextRun.phase === 'completed') {
-        const finishedTimer = finishTimer(timer, Date.now())
+        const finishedTimer = finishTimer(timer, performance.now())
+        const finishedAt = finishedTimer.finishedAt ?? performance.now()
         const result = {
-          id: `${finishedTimer.finishedAt ?? Date.now()}-${Math.random()}`,
+          id: crypto.randomUUID(),
           // Store the raw name, not a localized placeholder: this is
           // persisted and rendered later, potentially under a different
           // language than the one active when the run finished.
           playerName: playerName.trim(),
           challengeSize,
-          elapsedMs: elapsedMilliseconds(
-            finishedTimer,
-            finishedTimer.finishedAt ?? Date.now(),
-          ),
-          completedAt: finishedTimer.finishedAt ?? Date.now(),
+          elapsedMs: elapsedMilliseconds(finishedTimer, finishedAt),
+          // completedAt is a real-world timestamp for the stored ranking
+          // record, unlike the monotonic clock used for run timing.
+          completedAt: Date.now(),
         }
         const personalBest = isPersonalBest(gameData.rankings, result)
         const inserted = insertResult(
@@ -210,7 +212,7 @@ export function App() {
           retained: inserted.retained,
         })
         setTimer(finishedTimer)
-        setNow(finishedTimer.finishedAt ?? Date.now())
+        setNow(finishedAt)
         setView('results')
       }
       transitionTimeoutId.current = null
