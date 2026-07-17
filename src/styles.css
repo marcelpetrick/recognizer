@@ -44,6 +44,8 @@ input:focus-visible {
   background: #fffdf5;
   box-shadow: 10px 10px 0 #f6c64f;
   padding: clamp(1.75rem, 6vw, 3.5rem);
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 .language-picker {
   display: flex;
