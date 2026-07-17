@@ -1,3 +1,4 @@
+import { rankingLimit } from '../domain/rankings'
 import { formatDuration } from '../domain/timer'
 import type { ChallengeSize, RankingEntry } from '../domain/types'
 import type { Translations } from '../i18n'
@@ -21,7 +22,7 @@ export function RankingsView({
         <p className="eyebrow">{t.localRankings}</p>
         <h1>{t.bestTimes(challengeSize)}</h1>
         <ol className="ranking-list">
-          {Array.from({ length: 10 }, (_, index) => {
+          {Array.from({ length: rankingLimit }, (_, index) => {
             const entry = entries[index]
             return (
               <li key={entry?.id ?? `empty-${index}`}>

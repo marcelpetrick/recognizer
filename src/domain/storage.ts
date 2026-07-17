@@ -1,5 +1,6 @@
-import { emptyRankings, type TieredRankings } from './rankings'
+import { emptyRankings, rankingLimit, type TieredRankings } from './rankings'
 import {
+  challengeSizes,
   isChallengeSize,
   isLanguage,
   type Preferences,
@@ -82,7 +83,7 @@ function parseRankings(value: unknown): TieredRankings | undefined {
 
   const rankingRecord = value as Record<string, unknown>
   const rankings = emptyRankings()
-  for (const tier of [10, 20, 50] as const) {
+  for (const tier of challengeSizes) {
     const entries = rankingRecord[tier]
     if (!Array.isArray(entries) || !entries.every(isRankingEntry)) {
       return undefined
@@ -94,7 +95,7 @@ function parseRankings(value: unknown): TieredRankings | undefined {
           first.elapsedMs - second.elapsedMs ||
           first.insertionOrder - second.insertionOrder,
       )
-      .slice(0, 10)
+      .slice(0, rankingLimit)
   }
   return rankings
 }
