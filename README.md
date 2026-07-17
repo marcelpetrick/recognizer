@@ -1,6 +1,6 @@
 # Recognizer Game
 
-Recognizer Game is a browser-based, single-player concentration game. Two cards are shown at a time, and every pair of cards has exactly one symbol in common. The player finds that symbol as quickly as possible while a wall-clock timer runs.
+Recognizer Game is a browser-based, single-player concentration game. Two cards are shown at a time, and every pair of cards has exactly one symbol in common. The player finds that symbol as quickly as possible while a continuously running timer counts the elapsed time. The interface is available in English, Croatian, and German.
 
 **Play it live: [https://marcelpetrick.github.io/recognizer/](https://marcelpetrick.github.io/recognizer/)** (deployed via [GitHub Pages](https://github.com/marcelpetrick/recognizer/deployments/github-pages))
 
@@ -10,7 +10,7 @@ This document is the product specification for the MVP. It consolidates the orig
 
 **License: GPLv3 or later. See `LICENSE`.**
 
-**Note: projected is generated with AI.**
+**Note: this project is generated with AI assistance.**
 
 ## Product goals
 
@@ -19,6 +19,7 @@ This document is the product specification for the MVP. It consolidates the orig
 - Work well with mouse, touchpad, and touchscreen input.
 - Preserve player preferences and local rankings between browser sessions.
 - Use a playful, highly recognizable visual language.
+- Offer the full interface in English, Croatian, and German with immediate switching.
 - Keep the first release focused on a polished single-player experience.
 - Avoid all user-facing references to existing commercial games, brands, or sources of inspiration.
 
@@ -39,7 +40,7 @@ During a challenge, choose the shared symbol on either visible card. A correct s
 
 ![Active matching game: the player finds the one shared symbol between the current and next cards.](./media/game.png)
 
-After the final match, the game freezes the wall-clock time, stores the result in the selected challenge tier, and reports personal-best and ranking feedback.
+After the final match, the game freezes the elapsed time, stores the result in the selected challenge tier, and reports personal-best and ranking feedback.
 
 ![Completed challenge result with time, personal-best status, and tier ranking.](./media/record.png)
 
@@ -141,7 +142,7 @@ The visual style is playful 1990s clip art:
 - recognizable when small or rotated;
 - distinguishable by shape, never by color alone.
 
-Colors should be balanced across the library. For example, the tree is green, the anchor and treble clef may be brown, the carrot orange, the cheese yellow, and the ice cube light blue. Similar-colored icons must have clearly different silhouettes.
+Colors should be balanced across the library and fit the depicted object. For example, the tree is green, the treble clef brown, the anchor steel blue, the carrot orange, the cheese yellow, and the ice cube light blue. Similar-colored icons must have clearly different silhouettes, and every symbol has exactly one icon and one color — two symbols must never share the same glyph.
 
 ## Card presentation
 
@@ -167,18 +168,19 @@ The first version will use conservative, human-readable layout limits. Exact siz
 The menu contains:
 
 - game title and short timed-challenge description;
+- a language switcher (EN / HR / DE) that changes the whole interface immediately;
 - optional player name with a reasonable length limit;
 - clearly selected 10-, 20-, or 50-card challenge;
 - start button;
-- access to help;
-- access to rankings;
-- remembered name and preferences from the previous session.
+- access to help, rankings, and settings;
+- the current application version;
+- remembered name, language, and preferences from the previous session.
 
-If the name is empty, results are stored as `Player`.
+If the name is empty, the result is stored with an empty name and every view falls back to the localized default (`Player` / `Igrač` / `Spieler`) at display time, so switching languages never leaves stale names in the rankings.
 
 ### Help
 
-Help uses short, nontechnical instructions and a visual example. It explains the one-shared-symbol rule, selecting on either card, card progression, challenge sizes, wall-clock timer, rankings, randomized layouts, and how to leave or restart.
+Help uses short, nontechnical instructions and a visual example. It explains the one-shared-symbol rule, selecting on either card, card progression, challenge sizes, the never-pausing timer, rankings, randomized layouts, and how to leave or restart.
 
 ### Preparing
 
@@ -204,13 +206,17 @@ After the final correct match, input is disabled and the recorded time is frozen
 
 Incorrect selections, average time per match, and fastest match may be recorded as secondary statistics, but elapsed time remains the only ranking criterion.
 
+### Settings
+
+Settings offers persisted toggles for feedback sounds and reduced animations, plus a confirmed action that clears all local game data (rankings, name, and preferences).
+
 ### Abandoned or restarted
 
 Leaving or restarting requires confirmation because it discards the run. An abandoned run is never ranked. Restarting keeps the selected challenge size, resets progress and the timer, and selects and shuffles a new set of cards.
 
 ## Timer behavior
 
-The timer measures elapsed wall-clock time from the moment the first playable pair appears until the final correct selection. It does not pause for tab changes, window minimization, device sleep, orientation changes, help, or loss of focus. The implementation must derive the display from timestamps rather than counting render intervals, so background throttling cannot make a run appear faster.
+The timer measures continuously elapsed real time from the moment the first playable pair appears until the final correct selection. It does not pause for tab changes, window minimization, device sleep, orientation changes, help, or loss of focus. The implementation derives the display from a monotonic clock (`performance.now()`) rather than counting render intervals or reading the wall clock, so background throttling cannot make a run appear faster and a system clock adjustment mid-run cannot corrupt or shorten the recorded time. Only the completion date stored with a ranking entry uses the wall clock.
 
 The active display shows at least minutes and seconds. Stored results use integer milliseconds; the result and ranking views may show hundredths of a second.
 
@@ -220,7 +226,7 @@ There is no pause function in the MVP because the stakeholder decision is that t
 
 A correct selection briefly highlights the shared icon on both cards and transitions immediately to the next pair. Animation should feel responsive and must not add meaningful forced delay.
 
-An incorrect selection triggers a small warning beside the play area and a brief visual response on the selected icon. An optional error sound may play. The warning is non-modal, does not block further input, and disappears automatically. Repeated incorrect selections are allowed and have no effect other than elapsed wall-clock time.
+An incorrect selection triggers a small warning beside the play area and a brief visual response on the selected icon. An optional error sound may play. The warning is non-modal, does not block further input, and disappears automatically. Repeated incorrect selections are allowed and have no effect other than the time they cost.
 
 The game is fully playable without audio. Sound has an on/off preference, defaults conservatively, and respects browser autoplay restrictions.
 
@@ -256,6 +262,10 @@ Additional requirements:
 - the interface remains usable with sound disabled.
 
 The symbol-matching interaction is primarily visual. Full nonvisual gameplay is not an MVP promise, but menus, settings, rankings, and game controls should use accessible web semantics.
+
+## Languages
+
+The interface is fully translated into English, Croatian, and German. The main menu offers an EN / HR / DE switcher; changing the language re-renders the whole interface immediately, updates the document `lang` attribute (so screen readers and hyphenation follow), and persists the choice with the other preferences. Every user-facing string lives in a typed translation table, so a missing translation in any language is a compile-time error, and plural forms follow each language's real grammar rules. Long translated words hyphenate instead of overflowing the layout, which is covered by automated per-language layout tests.
 
 ## Recommended technical approach
 
@@ -302,12 +312,15 @@ The full local verification sequence is:
 
 ```bash
 npm run format:check
+npm run docs:check-links
 npm run lint
 npm run typecheck
 npm test
 npm run build
 npm run test:e2e
 ```
+
+The Playwright suite builds the production bundle and tests it through `vite preview`, so the end-to-end runs exercise the real deployable artifact, including the service worker.
 
 Run every check through the local pipeline:
 
@@ -320,13 +333,18 @@ Use `./localPipeline.sh --install` after a fresh checkout, `--skip-e2e` when bro
 ```mermaid
 flowchart LR
   Install[npm ci or existing node_modules] --> Format[Prettier check]
-  Format --> Lint[ESLint]
+  Format --> Docs[Markdown link check]
+  Docs --> Lint[ESLint]
   Lint --> Types[TypeScript check]
   Types --> Unit[Vitest unit and component tests]
   Unit --> Build[Production PWA build]
   Build --> Browser[Playwright desktop and mobile tests]
   Browser --> Summary[Stage summary and exit status]
 ```
+
+### Continuous integration and deployment
+
+The same stages run automatically on GitHub Actions (`.github/workflows/ci.yml`) for every push to `master` and every pull request. A second workflow (`.github/workflows/deploy-pages.yml`) builds the app with the GitHub Pages base path and publishes it to the live URL above on every push to `master`. Dependabot checks npm packages and workflow actions weekly.
 
 The production build includes a web app manifest and service worker. Once the app has loaded successfully, the browser can offer installation and serves the cached application shell and game assets while offline. Local rankings are browser storage, not part of the service-worker cache.
 
@@ -341,9 +359,10 @@ The MVP includes:
 - 8 symbols per card and exactly one common symbol per card pair;
 - 10-, 20-, and 50-card challenges;
 - shuffled subsets and collision-free visual layouts;
-- wall-clock timer, progress, correct/incorrect feedback, and results;
+- continuously running monotonic timer, progress, correct/incorrect feedback, and results;
 - local rankings, personal bests, preferences, and data clearing;
-- main menu, help, responsive game screen, and results views;
+- English, Croatian, and German interface with immediate switching;
+- main menu, help, settings, responsive game screen, and results views;
 - mouse, touchpad, and touchscreen support;
 - repository-owned generated icon assets;
 - optional installable/offline browser mode after initial load.
@@ -362,7 +381,7 @@ The MVP is complete when:
 - randomized layouts keep every symbol visible, separate, recognizable, and selectable;
 - selecting the shared symbol on either card advances exactly once;
 - an incorrect selection gives non-blocking feedback and does not advance or penalize the score;
-- the timer uses wall-clock time, stays visible, continues across focus loss, and freezes on the last match;
+- the timer measures continuous real time, stays visible, continues across focus loss, and freezes on the last match;
 - leaving/restarting confirms and never saves an incomplete run;
 - results are ranked by time in the correct tier, with equal times ordered first-come-first-served;
 - rankings and preferences survive a page reload and browser restart;
