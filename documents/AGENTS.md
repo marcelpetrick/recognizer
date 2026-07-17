@@ -1,13 +1,14 @@
-# AGENTS.md
+# AGENTS.md — domain and product rules
 
-Contributor instructions for work in `recognizerGame/` and its descendants.
+Product-level contributor instructions for this repository. The binding **workflow** rules (git, versioning, quality gates) live in [the root AGENTS.md](../AGENTS.md).
 
 ## Read first
 
 Before changing the project, read:
 
-1. `../README.md` — authoritative MVP product specification.
-2. `IMPLEMENTATION_PLAN.md` — intended architecture, sequence, verification, and review gates.
+1. [the root AGENTS.md](../AGENTS.md) — mandatory workflow rules.
+2. `../README.md` — authoritative MVP product specification.
+3. `IMPLEMENTATION_PLAN.md` — intended architecture, sequence, verification, and review gates.
 
 If old notes or prompts disagree with the README, follow the README. Do not silently reinterpret product rules. Update the specification in a dedicated documentation commit when an approved decision changes.
 
@@ -21,7 +22,7 @@ These rules are non-negotiable unless the stakeholder explicitly changes the spe
 - Challenge sizes are 10, 20, or 50 **total cards**, producing 9, 19, or 49 matching decisions.
 - A player may select the shared symbol on either visible card.
 - Wrong selections give non-blocking feedback only. They do not advance, reveal the answer, lock play, or add a score penalty.
-- The score is elapsed wall-clock time. It continues across focus loss, tab changes, minimization, and sleep.
+- The score is continuously elapsed real time from a monotonic clock. It continues across focus loss, tab changes, minimization, and sleep, and a system clock change must not affect it.
 - Rankings are separate by challenge size, fastest first, best 10, with exact ties ordered first-completed first.
 - Persistence is local to the browser/device. The MVP has no accounts, backend, global leaderboard, multiplayer, or tournament mode.
 - User-facing text must not name or reference an existing commercial game, brand, or source of inspiration.
@@ -87,7 +88,7 @@ Tests should cover at minimum:
 - seeded shuffle and layout determinism;
 - layout bounds, spacing, rotation, and fallback behavior across many seeds;
 - correct selection on either card, wrong selection, and double-input guarding;
-- wall-clock timing across large clock jumps and final-time freezing;
+- monotonic run timing that survives system clock jumps, and final-time freezing;
 - ranking tier isolation, ties, duplicates, trimming, and personal bests;
 - persistence round trips, malformed data, schema migration, failure, and clearing;
 - complete short-game flows at desktop and mobile viewport sizes.
