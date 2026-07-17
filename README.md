@@ -299,6 +299,8 @@ flowchart TD
 
 The deck and game rules are pure TypeScript modules. React renders the menu, cards, timer, and result views around that state. Rankings and preferences are validated before being read from browser storage, so malformed local data falls back safely to defaults.
 
+See [C4_architecture.md](./documents/C4_architecture.md) for the full C4 documentation: system context, containers, components, the domain code model, a runtime sequence, and the deployment view.
+
 ## Running and verifying the game
 
 Install the locked dependencies and run the browser development server:
