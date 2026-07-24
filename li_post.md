@@ -9,9 +9,10 @@ If you want to play it (free and safe): https://marcelpetrick.github.io/recogniz
 It is super simple, but pattern matching requires concentration, and you have to be quick. 𝗜𝘁'𝘀 𝗴𝗿𝗲𝗮𝘁 𝗳𝘂𝗻 𝗲𝘃𝗲𝗻 𝗮𝘀 𝗮 𝘀𝗶𝗻𝗴𝗹𝗲 𝗽𝗹𝗮𝘆𝗲𝗿 with a local high-score list.
 
 Building it raised three useful questions:
-* 𝗛𝗼𝘄 𝗱𝗼 𝘆𝗼𝘂 𝗴𝘂𝗮𝗿𝗮𝗻𝘁𝗲𝗲 that rule across all 𝟏,𝟓𝟗𝟔 possible card pairs?
-* 𝗛𝗼𝘄 𝗱𝗼 𝘆𝗼𝘂 𝘁𝘂𝗿𝗻 a shared game into a good single-player challenge?
-* 𝗛𝗼𝘄 𝗺𝘂𝗰𝗵 𝗶𝗻𝗳𝗿𝗮𝘀𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲 does a small browser game actually need?
+
+- 𝗛𝗼𝘄 𝗱𝗼 𝘆𝗼𝘂 𝗴𝘂𝗮𝗿𝗮𝗻𝘁𝗲𝗲 that rule across all 𝟏,𝟓𝟗𝟔 possible card pairs?
+- 𝗛𝗼𝘄 𝗱𝗼 𝘆𝗼𝘂 𝘁𝘂𝗿𝗻 a shared game into a good single-player challenge?
+- 𝗛𝗼𝘄 𝗺𝘂𝗰𝗵 𝗶𝗻𝗳𝗿𝗮𝘀𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲 does a small browser game actually need?
 
 The mathematical part uses a finite projective plane. 𝗧𝗵𝗲 𝘁𝗲𝘀𝘁 𝘀𝘂𝗶𝘁𝗲 𝘃𝗲𝗿𝗶𝗳𝗶𝗲𝘀 𝗲𝘃𝗲𝗿𝘆 𝗽𝗼𝘀𝘀𝗶𝗯𝗹𝗲 𝗰𝗮𝗿𝗱 𝗽𝗮𝗶𝗿.
 
