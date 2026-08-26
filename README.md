@@ -10,7 +10,7 @@ This document is the product specification for the MVP. It consolidates the orig
 
 **License: GPLv3 or later. See `LICENSE`.**
 
-**Note: this project is generated with AI assistance.**
+**Note: project is generated with AI.**
 
 ## Product goals
 
