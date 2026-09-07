@@ -346,7 +346,9 @@ flowchart LR
 
 ### Continuous integration and deployment
 
-The same stages run automatically on GitHub Actions (`.github/workflows/ci.yml`) for every push to `master` and every pull request. A second workflow (`.github/workflows/deploy-pages.yml`) builds the app with the GitHub Pages base path and publishes it to the live URL above on every push to `master`. Dependabot checks npm packages and workflow actions weekly.
+The same stages run automatically on GitHub Actions (`.github/workflows/ci.yml`) for every push to `master` and every pull request; a failing run uploads the Playwright report and traces as an artifact. A second workflow (`.github/workflows/deploy-pages.yml`) builds the app with the GitHub Pages base path and publishes it to the live URL above on every push to `master`.
+
+Three workflows guard dependencies and code. Dependabot checks npm packages and workflow actions weekly. `.github/workflows/dependency-review.yml` blocks a pull request that pulls in a high-severity advisory or a licence incompatible with GPLv3. `.github/workflows/codeql.yml` runs CodeQL static analysis on every push, every pull request, and weekly, so new queries still reach `master` during quiet periods.
 
 The production build includes a web app manifest and service worker. Once the app has loaded successfully, the browser can offer installation and serves the cached application shell and game assets while offline. Local rankings are browser storage, not part of the service-worker cache.
 

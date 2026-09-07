@@ -142,8 +142,12 @@ The complete game state machine (menu, preparing, active, transitioning, complet
 ```mermaid
 flowchart LR
   Dev[Developer push / PR] --> CI[GitHub Actions: ci.yml<br>format, links, lint, types, unit, build, e2e]
+  Dev --> Scan[GitHub Actions: codeql.yml<br>CodeQL security-extended]
+  Dev -->|pull request| Review[GitHub Actions: dependency-review.yml<br>advisory and licence gate]
   Dev -->|push to master| Deploy[GitHub Actions: deploy-pages.yml<br>build with PUBLIC_BASE_PATH=/recognizer/]
   Deploy --> Pages[GitHub Pages<br>marcelpetrick.github.io/recognizer]
   Pages --> Browser[Player's browser<br>SPA + service worker + localStorage]
+  Scan --> Alerts[GitHub code scanning alerts]
   Dependabot[Dependabot weekly] --> CI
+  Dependabot --> Review
 ```
