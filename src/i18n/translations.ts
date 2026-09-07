@@ -16,6 +16,12 @@ export interface Translations {
   readonly howToPlay: string
   readonly rankings: string
   readonly settings: string
+  readonly about: string
+  readonly aboutAuthorLabel: string
+  readonly aboutLicenseLabel: string
+  readonly aboutVersionLabel: string
+  readonly aboutLicenseNote: string
+  readonly aboutSourceCode: string
   readonly helpTitle: string
   readonly helpSteps: readonly [string, string, string, string, string]
   readonly helpNote: string
@@ -65,6 +71,13 @@ export const en: Translations = {
   howToPlay: 'How to play',
   rankings: 'Rankings',
   settings: 'Settings',
+  about: 'About',
+  aboutAuthorLabel: 'Author',
+  aboutLicenseLabel: 'License',
+  aboutVersionLabel: 'Version',
+  aboutLicenseNote:
+    'Free software: use it, study it, share it and change it under the GNU General Public License, version 3 or later.',
+  aboutSourceCode: 'View source on GitHub',
   helpTitle: 'Find the one match',
   helpSteps: [
     'Two cards appear with eight symbols each.',
@@ -122,6 +135,13 @@ export const de: Translations = {
   howToPlay: 'Spielanleitung',
   rankings: 'Bestenliste',
   settings: 'Einstellungen',
+  about: 'Über',
+  aboutAuthorLabel: 'Autor',
+  aboutLicenseLabel: 'Lizenz',
+  aboutVersionLabel: 'Version',
+  aboutLicenseNote:
+    'Freie Software: nutze, untersuche, teile und verändere sie unter der GNU General Public License, Version 3 oder später.',
+  aboutSourceCode: 'Quellcode auf GitHub',
   helpTitle: 'Finde die eine Übereinstimmung',
   helpSteps: [
     'Zwei Karten erscheinen mit je acht Symbolen.',
@@ -196,6 +216,13 @@ export const hr: Translations = {
   howToPlay: 'Kako se igra',
   rankings: 'Ljestvica',
   settings: 'Postavke',
+  about: 'O aplikaciji',
+  aboutAuthorLabel: 'Autor',
+  aboutLicenseLabel: 'Licenca',
+  aboutVersionLabel: 'Verzija',
+  aboutLicenseNote:
+    'Slobodan softver: koristi ga, proučavaj, dijeli i mijenjaj pod GNU General Public License, verzija 3 ili novija.',
+  aboutSourceCode: 'Izvorni kôd na GitHubu',
   helpTitle: 'Pronađi jedno podudaranje',
   helpSteps: [
     'Pojavljuju se dvije karte, svaka s osam simbola.',

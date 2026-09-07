@@ -25,6 +25,7 @@ import {
 } from './domain/storage'
 import { matchingDecisionCount, type SymbolId } from './domain/types'
 import { translations } from './i18n'
+import { AboutView } from './views/AboutView'
 import { GameView } from './views/GameView'
 import { HelpView } from './views/HelpView'
 import { MenuView } from './views/MenuView'
@@ -32,7 +33,8 @@ import { RankingsView } from './views/RankingsView'
 import { ResultsView } from './views/ResultsView'
 import { SettingsView } from './views/SettingsView'
 
-type View = 'menu' | 'help' | 'game' | 'results' | 'rankings' | 'settings'
+type View =
+  'menu' | 'help' | 'game' | 'results' | 'rankings' | 'settings' | 'about'
 
 export function App() {
   const [view, setView] = useState<View>('menu')
@@ -223,6 +225,10 @@ export function App() {
     return <HelpView t={t} onBack={() => setView('menu')} />
   }
 
+  if (view === 'about') {
+    return <AboutView t={t} onBack={() => setView('menu')} />
+  }
+
   if (view === 'results' && run && timer) {
     return (
       <ResultsView
@@ -292,6 +298,7 @@ export function App() {
       onShowHelp={() => setView('help')}
       onShowRankings={() => setView('rankings')}
       onShowSettings={() => setView('settings')}
+      onShowAbout={() => setView('about')}
     />
   )
 }

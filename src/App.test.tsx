@@ -41,6 +41,29 @@ describe('App', () => {
     ).toBeInTheDocument()
   })
 
+  it('shows authorship, licensing and source links on the about screen', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: /^about$/i }))
+
+    expect(
+      screen.getByRole('link', { name: 'mail@marcelpetrick.it' }),
+    ).toHaveAttribute('href', 'mailto:mail@marcelpetrick.it')
+    expect(
+      screen.getByRole('link', { name: 'GPL-3.0-or-later' }),
+    ).toHaveAttribute(
+      'href',
+      'https://github.com/marcelpetrick/recognizer/blob/master/LICENSE',
+    )
+    expect(
+      screen.getByRole('link', { name: /view source on github/i }),
+    ).toHaveAttribute('href', 'https://github.com/marcelpetrick/recognizer')
+
+    fireEvent.click(screen.getByRole('button', { name: /back to menu/i }))
+    expect(
+      screen.getByRole('heading', { name: 'Recognizer' }),
+    ).toBeInTheDocument()
+  })
+
   it('can complete a short challenge by selecting the shared symbol', () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-07-14T12:00:00Z'))

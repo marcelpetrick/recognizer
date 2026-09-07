@@ -160,6 +160,12 @@ h1 {
   width: 100%;
   margin-top: 1.6rem;
 }
+/* Some buttons are real links (opening the repository); strip the anchor
+   defaults so they are indistinguishable from the button they sit beside. */
+a.button {
+  text-align: center;
+  text-decoration: none;
+}
 /* Same button, scaled down for the game header, where it sits beside the
    timer rather than at the foot of a panel. */
 .button-compact {
@@ -172,9 +178,45 @@ h1 {
    fewer columns instead of overflowing the panel. */
 .menu-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
   gap: 0.7rem;
   margin-top: 1.4rem;
+}
+.about-list {
+  margin: 1.5rem 0;
+  border-top: 2px solid #d7d0bd;
+}
+.about-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, auto) 1fr;
+  gap: 0.5rem 1rem;
+  align-items: baseline;
+  padding: 0.7rem 0;
+  border-bottom: 2px solid #d7d0bd;
+}
+.about-row dt {
+  font-weight: 900;
+}
+.about-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+/* Narrow screens leave the value column too tight for an email address, which
+   then breaks mid-word. Stack label over value so it gets the full width;
+   overflow-wrap above stays as the last-resort guard. */
+@media (max-width: 30rem) {
+  .about-row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}
+.about-note {
+  margin: 0;
+  color: #3d4756;
+}
+.text-link {
+  color: #264b82;
+  font-weight: 800;
 }
 .version-tag {
   margin: 1.4rem 0 0;

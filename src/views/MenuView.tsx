@@ -17,6 +17,7 @@ interface MenuViewProps {
   readonly onShowHelp: () => void
   readonly onShowRankings: () => void
   readonly onShowSettings: () => void
+  readonly onShowAbout: () => void
 }
 
 export function MenuView({
@@ -29,6 +30,7 @@ export function MenuView({
   onShowHelp,
   onShowRankings,
   onShowSettings,
+  onShowAbout,
 }: MenuViewProps) {
   return (
     <main className="app-shell">
@@ -113,6 +115,13 @@ export function MenuView({
             onClick={onShowSettings}
           >
             {t.settings}
+          </button>
+          <button
+            className="button button-secondary"
+            type="button"
+            onClick={onShowAbout}
+          >
+            {t.about}
           </button>
         </nav>
         <p className="version-tag">v{__APP_VERSION__}</p>
