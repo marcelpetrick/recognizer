@@ -8,7 +8,7 @@ This document is the product specification for the MVP. It consolidates the orig
 
 **Author: Marcel Petrick <mail@marcelpetrick.it>**
 
-**License: GPLv3 or later. See `LICENSE`.**
+**License: GPLv3 or later. See [LICENSE](./LICENSE).**
 
 **Note: project is generated with AI.**
 
