@@ -43,7 +43,7 @@ C4Component
   title Components — Single-Page Application
   Container_Boundary(spa, "Single-Page Application") {
     Component(app, "App", "src/App.tsx", "Orchestrator: state, effects, view selection, run lifecycle; no presentation markup")
-    Component(views, "Views", "src/views/*", "MenuView, HelpView, GameView, ResultsView, RankingsView, SettingsView — presentational, receive translations and callbacks")
+    Component(views, "Views", "src/views/*", "MenuView, HelpView, GameView, ResultsView, RankingsView, SettingsView, AboutView — presentational, receive translations and callbacks")
     Component(cards, "Card rendering", "src/components/*", "SymbolCard and SymbolMark render the seeded symbol layouts; ErrorBoundary catches render crashes")
     Component(i18n, "Translations", "src/i18n/*", "Typed en/hr/de tables; a missing key in any language is a compile-time error")
     Component(domain, "Game domain", "src/domain/*", "deck (projective plane), challenge (seeded shuffle), game (run state machine), layout (seeded geometry), timer, rankings, storage, symbols, types")

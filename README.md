@@ -159,6 +159,8 @@ For each card rendering, the layout system may vary position, rotation, and size
 - symbols are not mirrored;
 - the layout remains usable on supported screen sizes.
 
+Controls share one vocabulary across every screen: a filled yellow button for the single forward action of a screen, an outlined button for navigation, and red for the one destructive action. Every panel ends with the same full-width back button, so leaving a screen looks identical wherever the player is.
+
 The first version will use conservative, human-readable layout limits. Exact size, rotation, and spacing values are tuning parameters to be refined after playtesting. A deterministic layout seed should be available in development and tests so a problematic arrangement can be reproduced.
 
 ## Screens and states
@@ -172,7 +174,7 @@ The menu contains:
 - optional player name with a reasonable length limit;
 - clearly selected 10-, 20-, or 50-card challenge;
 - start button;
-- access to help, rankings, and settings;
+- access to help, rankings, settings, and about;
 - the current application version;
 - remembered name, language, and preferences from the previous session.
 
@@ -209,6 +211,10 @@ Incorrect selections, average time per match, and fastest match may be recorded 
 ### Settings
 
 Settings offers persisted toggles for feedback sounds and reduced animations, plus a confirmed action that clears all local game data (rankings, name, and preferences).
+
+### About
+
+About names the author with a contact address, states the licence as GPL-3.0-or-later and links to the [LICENSE](./LICENSE) file, shows the running application version, and links to the source repository. An installed PWA never shows the repository, so this is where a player learns who wrote the game and what the licence grants.
 
 ### Abandoned or restarted
 
