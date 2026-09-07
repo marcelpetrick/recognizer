@@ -17,7 +17,11 @@ export function HelpView({ t, onBack }: HelpViewProps) {
           ))}
         </ol>
         <p>{t.helpNote}</p>
-        <button className="button" type="button" onClick={onBack}>
+        <button
+          className="button button-secondary back-button"
+          type="button"
+          onClick={onBack}
+        >
           {t.backToMenu}
         </button>
       </section>

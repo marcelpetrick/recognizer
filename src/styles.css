@@ -153,18 +153,19 @@ h1 {
 .button-secondary {
   background: #fff;
 }
-.text-button {
-  border: 0;
-  background: transparent;
-  color: #264b82;
-  font-weight: 800;
-  text-decoration: underline;
-}
-.menu-help {
+/* Every screen leaves the same way, so the action looks the same everywhere:
+   a full-width secondary button closing the panel. */
+.back-button {
   display: block;
-  margin: 1.4rem auto 0;
-  padding: 0.5rem 0.9rem;
-  font-size: 1.2rem;
+  width: 100%;
+  margin-top: 1.6rem;
+}
+/* Same button, scaled down for the game header, where it sits beside the
+   timer rather than at the foot of a panel. */
+.button-compact {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.95rem;
+  box-shadow: 3px 3px 0 #172033;
 }
 /* Secondary navigation reads as one group of equal buttons: the columns are
    sized by content, so a long label (German "Spielanleitung") drops the row to
@@ -198,7 +199,7 @@ h1 {
   align-items: center;
   gap: 1rem;
 }
-.game-header .text-button {
+.game-header .button {
   justify-self: end;
 }
 .progress-text {
@@ -356,7 +357,7 @@ h1 {
   .game-header {
     grid-template-columns: 1fr auto;
   }
-  .game-header .text-button {
+  .game-header .button {
     grid-column: 1 / -1;
     justify-self: center;
   }

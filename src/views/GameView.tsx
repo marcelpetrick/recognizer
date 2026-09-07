@@ -40,7 +40,7 @@ export function GameView({
           {formatDuration(elapsedMs)}
         </div>
         <button
-          className="text-button"
+          className="button button-secondary button-compact"
           type="button"
           onClick={() => {
             if (window.confirm(t.leaveGameConfirm)) {

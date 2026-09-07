@@ -37,7 +37,11 @@ export function RankingsView({
             )
           })}
         </ol>
-        <button className="button" type="button" onClick={onBack}>
+        <button
+          className="button button-secondary back-button"
+          type="button"
+          onClick={onBack}
+        >
           {t.backToMenu}
         </button>
       </section>

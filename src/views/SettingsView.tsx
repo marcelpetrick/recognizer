@@ -55,7 +55,7 @@ export function SettingsView({
           {t.clearData}
         </button>
         <button
-          className="text-button menu-help"
+          className="button button-secondary back-button"
           type="button"
           onClick={onBack}
         >

@@ -56,7 +56,7 @@ export function ResultsView({
             {t.mainMenu}
           </button>
           <button
-            className="text-button"
+            className="button button-secondary"
             type="button"
             onClick={onViewRankings}
           >

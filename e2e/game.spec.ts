@@ -49,7 +49,7 @@ test('main menu has no automatically detectable accessibility violations', async
 // stay equal even when a panel is genuinely overflowing its own box.
 async function overflowingElements(page: import('@playwright/test').Page) {
   return page.evaluate(() => {
-    const selectors = ['.panel', 'h1', '.button', '.text-button', '.eyebrow']
+    const selectors = ['.panel', 'h1', '.button', '.eyebrow']
     return Array.from(document.querySelectorAll(selectors.join(',')))
       .filter((el) => el.scrollWidth > el.clientWidth + 1)
       .map((el) => el.textContent?.trim().slice(0, 60))
