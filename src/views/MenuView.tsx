@@ -92,29 +92,29 @@ export function MenuView({
         >
           {t.startChallenge}
         </button>
-        <button
-          className="text-button menu-help"
-          type="button"
-          onClick={onShowHelp}
-        >
-          {t.howToPlay}
-        </button>
-        <div className="menu-links">
+        <nav className="menu-actions" aria-label={t.menuActionsLabel}>
           <button
-            className="text-button"
+            className="button button-secondary"
+            type="button"
+            onClick={onShowHelp}
+          >
+            {t.howToPlay}
+          </button>
+          <button
+            className="button button-secondary"
             type="button"
             onClick={onShowRankings}
           >
             {t.rankings}
           </button>
           <button
-            className="text-button"
+            className="button button-secondary"
             type="button"
             onClick={onShowSettings}
           >
             {t.settings}
           </button>
-        </div>
+        </nav>
         <p className="version-tag">v{__APP_VERSION__}</p>
       </section>
     </main>

@@ -68,7 +68,10 @@ for (const { code, label } of [
       expect(await overflowingElements(page)).toEqual([])
     }).toPass()
 
-    await page.locator('.menu-help').click()
+    // The secondary menu actions are one navigation group; "how to play" is
+    // its first entry. Located by role so the check stays language-agnostic
+    // and does not depend on a styling class.
+    await page.getByRole('navigation').getByRole('button').first().click()
     await expect(async () => {
       expect(await overflowingElements(page)).toEqual([])
     }).toPass()

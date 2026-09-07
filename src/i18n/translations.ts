@@ -12,6 +12,7 @@ export interface Translations {
   readonly cardsUnit: string
   readonly challengeSizeLabel: (size: number) => string
   readonly startChallenge: string
+  readonly menuActionsLabel: string
   readonly howToPlay: string
   readonly rankings: string
   readonly settings: string
@@ -60,6 +61,7 @@ export const en: Translations = {
   cardsUnit: 'cards',
   challengeSizeLabel: (size) => `${size} cards`,
   startChallenge: 'Start timed challenge',
+  menuActionsLabel: 'More',
   howToPlay: 'How to play',
   rankings: 'Rankings',
   settings: 'Settings',
@@ -116,6 +118,7 @@ export const de: Translations = {
   cardsUnit: 'Karten',
   challengeSizeLabel: (size) => `${size} Karten`,
   startChallenge: 'Zeitchallenge starten',
+  menuActionsLabel: 'Mehr',
   howToPlay: 'Spielanleitung',
   rankings: 'Bestenliste',
   settings: 'Einstellungen',
@@ -189,6 +192,7 @@ export const hr: Translations = {
   cardsUnit: 'karata',
   challengeSizeLabel: (size) => `${size} karata`,
   startChallenge: 'Pokreni izazov na vrijeme',
+  menuActionsLabel: 'Više',
   howToPlay: 'Kako se igra',
   rankings: 'Ljestvica',
   settings: 'Postavke',
