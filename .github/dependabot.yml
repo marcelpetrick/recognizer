@@ -4,12 +4,21 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 5
     groups:
       minor-and-patch:
         update-types:
           - minor
           - patch
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      # Action bumps are reviewed together; one pull request per action is
+      # noise on a repository with this few workflows.
+      actions:
+        patterns:
+          - '*'
