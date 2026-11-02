@@ -81,8 +81,7 @@ export function MenuView({
                 aria-pressed={challengeSize === size}
                 onClick={() => onUpdatePreferences({ challengeSize: size })}
               >
-                <strong>{size}</strong>
-                <span>{t.cardsUnit}</span>
+                <strong>{size}</strong> <span>{t.cardsUnit}</span>
               </button>
             ))}
           </div>
